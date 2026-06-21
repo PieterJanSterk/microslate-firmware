@@ -48,7 +48,7 @@ jobs:
             0x10000 .pio/build/xteink_x4/firmware.bin
 
           # Download CP-BLE from your crosspoint-reader-dual-boot repo
-          if curl -f -o crosspoint-app.bin https://github.com/PieterJanSterk/crosspoint-reader-dual-boot/releases/download/v1.0/firmware.bin; then
+          if curl -f -o crosspoint-app.bin https://github.com/PieterJanSterk/crosspoint-reader-dual-boot/releases/download/v1.1/firmware.bin; then
             # Create dualboot binary with CP-BLE + MicroSlate
             esptool.py --chip esp32c3 merge_bin \
               --flash_mode dio --flash_size 16MB \

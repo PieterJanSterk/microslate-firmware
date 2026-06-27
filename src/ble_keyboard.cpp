@@ -187,13 +187,20 @@ static class ClientCallbacks : public NimBLEClientCallbacks {
 
   bool onConnParamsUpdateRequest(NimBLEClient* pClient,
                                   const ble_gap_upd_params* params) override {
-    // Reject the keyboard's connection parameter update request.
-    // Keychron keyboards send a conn param update on the first keypress (idle→active
-    // interval switch). Returning true makes NimBLE substitute our m_connParams into
-    // the response, which mismatches what the Keychron expects and causes an immediate
-    // crash/disconnect. Returning false tells the keyboard to keep the current params
-    // (30–50 ms interval negotiated at connect time), which works fine for all keyboards.
-    return false;
+    // FIXED FOR ZMK ARDUX COMPATIBILITY (June 2026)
+    // ZMK keyboards (including custom ARDUX layouts like The Paintbrush) send a 
+    // connection parameter update during reconnection (especially from sleep state).
+    // 
+    // Previous behavior: Returning false rejected the update, causing the keyboard
+    // to crash and reboot, which triggered a MicroSlate bootloop on reconnect.
+    //
+    // Fix: Return true to ACCEPT the keyboard's connection parameters.
+    // This matches CP-BLE's behavior (which works flawlessly with ZMK) and prevents
+    // the crash/reconnect cycle.
+    //
+    // CP-BLE works because it doesn't have this handler at all — it lets NimBLE
+    // accept params naturally. We now do the same.
+    return true;
   }
 
   // Security callbacks (merged from NimBLESecurityCallbacks — removed in 2.x)
